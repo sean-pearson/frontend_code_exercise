@@ -1,7 +1,7 @@
 /* TODO: the coding exercise is refactoring this file as you see fit */
 import React, { useRef, useState } from "react";
 import { StyleSheet, Text } from "react-native";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { TutorialSlideType } from "@constants/types";
 import { TutorialModal } from "@src/modules/screens/tutorial/TutorialModal";
 import { PaginationWrapper } from "@components/PaginationWrapper";
@@ -10,20 +10,23 @@ import { SkipButton } from "@components/SkipButton";
 
 interface TutorialProps {
   tutorialSlides: Array<TutorialSlideType>;
-  visible: boolean;
   onFirstTutorialSlideNextAction: () => void;
   onPrompt: (_a?: any, _b?: any, _c?: any) => void;
 }
 
 const Tutorial: React.FC<TutorialProps> = ({
   tutorialSlides,
-  visible,
   onFirstTutorialSlideNextAction,
   onPrompt,
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [scrolling, setScrolling] = useState(false);
   const carouselRef = useRef(null);
+
+  const visible = useSelector((state) => {
+    console.log(state);
+    return state.tutorial.isVisible;
+  });
 
   const onNextEvent = () => {
     if (activeIndex === 0) {
@@ -81,10 +84,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state: any) => {
-  return {
-    visible: state.tutorial.isVisible,
-  };
-};
-
-export default connect(mapStateToProps)(Tutorial);
+export default Tutorial;
